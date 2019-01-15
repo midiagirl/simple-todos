@@ -59,7 +59,23 @@ Meteor.methods({
             throw new Meteor.Error('not-authorized');
         }
         Tasks.remove(taskId);
-    },
+      },
+
+      'tasks.update'(taskId, text){
+        check(taskId,String);
+        check(text,String);
+
+        var task = Tasks.findOne(taskId);
+        if(task.private && task.owner !== this.userId){
+          throw new Meteor.Error('not-authorized');
+        }
+        Tasks.update(
+          taskId,
+          {
+            $set:{text:text}
+          }
+        );
+      },
 
     'tasks.setChecked'(taskId, setChecked) {
         check(taskId, String);
